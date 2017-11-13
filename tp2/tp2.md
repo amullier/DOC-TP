@@ -50,7 +50,7 @@ Non on a pas de différence.
 
 ### 15.
 ![](./img/q13.png)
-Non il n'y a pas de difféReferences
+Non il n'y a pas de différences
 
 ### 16.
 ![](./img/q16.png)
