@@ -43,12 +43,33 @@ val wc = wordCounts.map(_.swap).orderBy(desc("_1")).take(50)
 ```
 
 #### 2.d)
-``` java
+``` scala
 val zippedVal = wc.collect.zip (Stream from 0)
 ```
 
 #### 2.e)
 On peut rajouter un **filter** spark :
-``` java
+``` scala
 val wordCounts = textFile.flatMap(line => line.split(" ")).filter(x => !x.equals("")).groupByKey(identity)
+```
+### 3.
+#### 3.a)
+``` scala
+val aol = sc.textFile("../AOL-01.txt")
+```
+
+#### 3.b)
+Pour compter les lignes du fichiers :
+``` scala
+aol.count
+```
+Recherche du mot "google" dans toutes les lignes :
+``` Scala
+aol.filter(line => line.contains("google")).count
+res14: Long = 58152
+```
+
+#### 3.c)
+``` scala
+aol.count
 ```
