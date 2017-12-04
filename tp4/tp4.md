@@ -45,7 +45,6 @@ val wc = wordCounts.map(_.swap).orderBy(desc("_1")).take(50)
 #### 2.d)
 ``` scala
 val zippedVal = wc.collect.zip (Stream from 0)
-zippedVal.map(p => p._2 + ": " + (p._1)._2  + " (" + (p._1)._1 + ")").foreach(println)
 ```
 
 #### 2.e)
@@ -130,3 +129,16 @@ val sortedCW = wc.sortByKey(false)
 sortedCW.take(50).foreach(println)
 ```
 #### 4)
+
+On prend les requetes avec "France", on fait une flatMap pour avoir les mots dans une liste et après on le trie en fonction du nombre d'occurence.
+
+Le tout est dans une structure pour correspondre à l'énoncé.
+``` Scala
+("france",
+  c.filter(query =>query.contains("france"))
+  .flatMap(_.split(" "))
+  .filter(word => word.contains("france"))
+  .map((_,1)).reduceByKey(_+_)
+  .map(p => (p._2, p._1))
+  .sortByKey(false).take(5).toList)
+```
