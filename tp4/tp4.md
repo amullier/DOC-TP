@@ -45,6 +45,7 @@ val wc = wordCounts.map(_.swap).orderBy(desc("_1")).take(50)
 #### 2.d)
 ``` scala
 val zippedVal = wc.collect.zip (Stream from 0)
+zippedVal.map(p => p._2 + ": " + (p._1)._2  + " (" + (p._1)._1 + ")").foreach(println)
 ```
 
 #### 2.e)
