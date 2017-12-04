@@ -62,6 +62,7 @@ val aol = sc.textFile("../AOL-01.txt")
 Pour compter les lignes du fichiers :
 ``` scala
 aol.count
+res0 : Long = 3558412
 ```
 Recherche du mot "google" dans toutes les lignes :
 ``` scala
@@ -71,5 +72,60 @@ res14: Long = 58152
 
 #### 3.c)
 ``` scala
-val queryFilter = aol_dead.map(line => line.split("\t")).map(array => array(1))
+val queryFilter = aol.map(line => line.split("\t")).map(array => array(1))
 ```
+
+#### 3.d)
+``` scala
+val d = aol.map(line => line.split("\t"))
+.map(array => array(1))
+.filter(query => query.split(" ").distinct.size != query.split(" ").size)
+
+d.count
+res14: Long = 35911
+```
+
+#### 3.e)
+Pour obtenir le comptage des mots dans les recherches
+``` scala
+val c = aol.map(line => line.split("\t")).map(array => array(1))
+val wc = c.flatMap(_.split(" ")).map((_,1)).reduceByKey(_+_)
+```
+
+Puis on trie la map par ordre de fréquence décroissant :
+``` scala
+val cw = wc.map(p => (p._2, p._1))
+val sortedCW = cw.sortedByKey(false)
+```
+Affichage du TOP50 des résultats obtenus :
+``` Scala
+sortedCW.take(50).foreach(println)
+
+(110575,of)
+(104052,-)
+(91521,in)
+(82961,the)
+(70107,for)
+(66675,and)
+(45168,to)
+(45149,free)
+(36220,a)
+(34970,google)
+(26856,new)
+(24394,http)
+(24113,on)
+(23491,yahoo)
+(22435,county)
+(21416,pictures)
+(19377,how)
+(19082,my)
+(18476,lyrics)
+```
+
+#### 3.f)
+``` scala
+val wc = c.map(query => (query.length,query))
+val sortedCW = wc.sortByKey(false)
+sortedCW.take(50).foreach(println)
+```
+#### 4)
