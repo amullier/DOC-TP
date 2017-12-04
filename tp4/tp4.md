@@ -38,7 +38,7 @@ _Premier test avec sort :_
 
 _Avec orderBy et swap :_
 
-``` java
+``` scala
 val wc = wordCounts.map(_.swap).orderBy(desc("_1")).take(50)
 ```
 
@@ -64,12 +64,12 @@ Pour compter les lignes du fichiers :
 aol.count
 ```
 Recherche du mot "google" dans toutes les lignes :
-``` Scala
+``` scala
 aol.filter(line => line.contains("google")).count
 res14: Long = 58152
 ```
 
 #### 3.c)
 ``` scala
-aol.count
+val queryFilter = aol_dead.map(line => line.split("\t")).map(array => array(1))
 ```
