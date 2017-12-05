@@ -1,4 +1,4 @@
-# TP4 - DOC : Spark
+# TP5 - DOC : NEO4J
 _05/12/2017_
 
 ### 1.
@@ -40,8 +40,30 @@ LIMIT 3
 ### 8.
 On ajoute un filtre dans le match pour les relations
 ``` neo4j
-MATCH (film:Movie) ->
-RETURN film.title
-ORDER BY film.title
-LIMIT 3
+MATCH (film:Movie) -- (p:Person{name:"Kevin Bacon"})
+RETURN film;
+```
+
+### 9.
+On ajoute une clause [DISTINCT](https://neo4j.com/docs/developer-manual/current/cypher/clauses/return/#return-unique-results) pour ne pas avoir de doublons.
+
+``` neo4j
+MATCH (p:Person{name:"Tom Cruise"}) -[:ACTED_IN]- (film:Movie) -[:ACTED_IN]- (p2:Person)
+WITH DISTINCT p2
+RETURN p2;
+```
+
+### 10.
+``` neo4j
+MATCH (p:Person{name:"Tom Cruise"}) -[*..10]- (p2:Person)
+WITH DISTINCT p2
+RETURN p2;
+```
+**Remarque :** On limite le nombre de liens à 10 pour éviter d'attendre trop longtemps la fin l'exécution de la requête.
+
+### 11.
+``` neo4j
+MATCH (p:Person{name:"Tom Cruise"}) -[*..3]- (p2:Person)
+WITH DISTINCT p2
+RETURN p2;
 ```
