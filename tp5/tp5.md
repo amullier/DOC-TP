@@ -61,9 +61,18 @@ RETURN p2;
 ```
 **Remarque :** On limite le nombre de liens à 10 pour éviter d'attendre trop longtemps la fin l'exécution de la requête.
 
-### 11.
+### 12.
 ``` neo4j
 MATCH (p:Person{name:"Tom Cruise"}) -[*..3]- (p2:Person)
 WITH DISTINCT p2
 RETURN p2;
 ```
+
+### 13.
+``` neo4j
+MERGE (Darkstar:Movie {title:'Darkstar',released:2015, tagline:'Inconnu à ce jour'})
+MERGE (Cyrille:Person {name : 'Cyrille Autin', born:1965})
+MERGE (Cyrille)-[:ACTED_IN {roles:['Military Head']}]->(Darkstar)
+RETURN Darkstar;
+```
+_Le retour de résultat est juste là pour voir les résultats _
