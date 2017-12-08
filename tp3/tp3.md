@@ -110,3 +110,46 @@ ICIP	28546
 ```
 
 #### 4.
+```JAVA
+public class Chercheur {
+
+    public static class ChercheurMapper extends Mapper<Object, Text, Text, IntWritable> {
+
+      private final static IntWritable resWritable = new IntWritable();
+      private Text first = new Text();
+      private Text second = new Text();
+
+      private Integer resultat;
+
+      public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+
+        Scanner line = new Scanner(value.toString());
+        line.useDelimiter(" ");
+        first.set(line.next());
+        second.set(line.next());
+
+        resultat = Integer.parseInt(first.toString())*Integer.parseInt(second.toString());
+
+        Text keyRes = new Text();
+        keyRes.set("scalaire");
+        resWritable.set(resultat);
+        context.write(keyRes,resWritable);
+    }
+  }
+
+  public static class ChercheurReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+      private IntWritable result = new IntWritable();
+
+      public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+
+      int count = 0;
+      for (IntWritable val : values) {
+        count += val.get();
+      }
+
+      result.set(count);
+      context.write(key, result);
+    }
+  }
+}
+```
