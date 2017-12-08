@@ -1,27 +1,112 @@
 # TP3 - DOC
 _14/11/2017_
 
-### Partie I
-### 6.
-<code>start-dfs.sh</code> rencontre un soucis lié à la variable java_home,
-dans le bashrc il faut mettre **export java_home= "votre path"**
+### 3.
+#### 2.
+En s'inpirant des traitements faits dans les fichiers Authors.java on ajoute un reducer que l'on place dans un fichier différent :
 
-``` sql
-ur1shell-4.3$ jps
-9888 SecondaryNameNode
-10405 Jps
-9622 NameNode
-9735 DataNode
+``` JAVA
+/**
+  * Classe de reducer pour obtenir le nombre de publication de William Kent
+  */
+ public static class ChercheurReducer extends
+     Reducer<Text, IntWritable, Text, IntWritable> {
+   private IntWritable result = new IntWritable();
+
+   //Auteur recherché
+   private String author = "William Kent";
+
+   public void reduce(Text key, Iterable<IntWritable> values,
+           Context context)
+       throws IOException, InterruptedException {
+
+
+     int count = 0;
+     for (IntWritable val : values) {
+       count += val.get();
+     }
+
+     result.set(count);
+     //On traite le résultat seulement pour l'auteur
+     if(key.toString().equals(author)){
+         context.write(key, result);
+     }
+   }
+ }
 ```
 
-### 9.
-```java
-OpenJDK 64-Bit Server VM warning: You have loaded library /private/student/0/80/14010980/Bureau/Doc/tp3-hadoop/hadoop-2.2.0/lib/native/libhadoop.so.1.0.0 which might have disabled stack guard. The VM will try to fix the stack guard now.
-It's highly recommended that you fix the library with 'execstack -c <libfile>', or link it with '-z noexecstack'.
-17/11/14 17:11:10 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-Found 2 items
--rw-r--r--   3 14010980 supergroup  223281915 2017-11-14 17:10 /author-large.txt
--rw-r--r--   3 14010980 supergroup      10070 2017-11-14 17:10 /author-small.txt
+Et au final on retrouve le résultat suivant dans le HDFS:
+```
+William Kent    29.
 ```
 
-### Partie II
+#### 3.
+Voici le fichier java utilisé pour obtenir la réponse à la question :
+
+```JAVA
+//Import packages...
+public class Chercheur {
+
+  public static class ChercheurMapper extends
+      Mapper<Object, Text, Text, IntWritable> {
+
+    private final static IntWritable one = new IntWritable(1);
+
+    private Text author = new Text();
+    private Text article = new Text();
+
+    public void map(Object key, Text value, Context context)
+        throws IOException, InterruptedException {
+
+
+      Scanner line = new Scanner(value.toString());
+      line.useDelimiter("\t");
+      author.set(line.next());
+      String nameArticle = line.next();
+
+      //On ajoute chacun des mots des titres d'article
+      String[] mots = nameArticle.split(" ");
+      for(String mot : mots) {
+          article.set(mot);
+          context.write(article, one);
+      }
+    }
+  }
+
+  //Reducer pour compter le nombre d'occurence de ces mots
+  public static class ChercheurReducer extends
+      Reducer<Text, IntWritable, Text, IntWritable> {
+    private IntWritable result = new IntWritable();
+    public void reduce(Text key, Iterable<IntWritable> values,
+            Context context)
+        throws IOException, InterruptedException {
+
+      int count = 0;
+      for (IntWritable val : values) {
+        count += val.get();
+      }
+      result.set(count);
+      context.write(key, result);
+    }
+  }
+}
+```
+A l'aide de la commande :
+``` shell
+cat _resultatQuestion3_part-r-00000 | sort -n -k2 -r | head -10
+```
+On obtient le fichier suivant :
+```
+(2)	86024
+(1)	85276
+Conference	83628
+on	68690
+and	54950
+Workshops	37472
+ISCAS	35475
+(3)	34099
+ICRA	30155
+ICIP	28546
+```
+
+#### 4.
